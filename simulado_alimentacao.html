@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado Alimentação e Voltagem - Frota P</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef2f7;color:#172033} header{position:sticky;top:0;z-index:10;background:#172033;color:white;padding:14px 16px;box-shadow:0 2px 8px #0003} h1{font-size:20px;margin:0 0 4px}.sub{font-size:13px;opacity:.9}.wrap{max-width:760px;margin:auto;padding:14px}.card{background:#fff;border-radius:14px;margin:12px 0;padding:14px;box-shadow:0 2px 10px #0001;border:1px solid #dde3ec}.qtitle{font-weight:700;margin-bottom:10px;line-height:1.35}.opt{display:block;margin:8px 0;padding:11px;border:1px solid #ccd5e2;border-radius:10px;background:#f9fbfe}.opt input{margin-right:8px}.bar{position:sticky;bottom:0;background:#fff;padding:10px;border-top:1px solid #d8dee9;box-shadow:0 -2px 8px #0001}.btn{width:100%;border:0;border-radius:12px;background:#0b63ce;color:#fff;font-size:18px;font-weight:700;padding:14px}.btn:active{transform:scale(.99)}#resultado{display:none}.ok{background:#e8f7ee;border-color:#6fc58b}.bad{background:#fdeaea;border-color:#e58a8a}.resumo{font-size:18px;font-weight:700}.small{font-size:13px;color:#5b6675}.tag{display:inline-block;background:#e9f1ff;color:#0b63ce;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:700;margin-top:6px}.topbtn{margin-top:8px;background:#223047}.legend{font-size:13px;background:#fff7df;border:1px solid #f1d27a;border-radius:12px;padding:10px;margin:12px 0;color:#4b3a00}.pill{display:inline-block;background:#dce9ff;color:#0b4ca8;border-radius:999px;padding:3px 8px;margin:2px;font-weight:700;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>Simulado Alimentação e Voltagem - Frota P</h1>
+<div class="sub">50 perguntas • celular • corrente contínua/alternada • o que alimenta o quê</div>
+</header>
+<div class="wrap">
+<div class="legend"><b>Legenda rápida:</b> <span class="pill">Vcc = corrente contínua</span> <span class="pill">Vca/Vac = corrente alternada</span></div>
+<div id="resultado" class="card"></div>
+<div id="quiz"></div>
+</div>
+<div class="bar">
+<button class="btn" onclick="finalizar()">Finalizar simulado</button>
+<button class="btn topbtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">Voltar ao topo</button>
+</div>
+<script>
+const questoes = [
+{q:'Qual é a tensão de alta tensão coletada na rede aérea pelos pantógrafos?',a:'1500 Vcc, corrente contínua',o:['1500 Vcc, corrente contínua','1500 Vac, corrente alternada','380 Vcc, corrente contínua','72 Vac, corrente alternada']},
+{q:'Os 1500 Vcc coletados da rede aérea alimentam diretamente quais equipamentos principais?',a:'Conversor Auxiliar (CVS) e Inversor de Tração',o:['Conversor Auxiliar (CVS) e Inversor de Tração','Baterias e iluminação de emergência','Somente tomadas auxiliares','Somente portas e CFTV']},
+{q:'O Conversor Auxiliar (CVS) converte qual tensão de entrada?',a:'1500 Vcc',o:['1500 Vcc','380 Vac','220 Vac','24 Vcc']},
+{q:'O CVS fornece baixa tensão para todos os equipamentos do trem, com exceção de qual item?',a:'Motores de tração',o:['Motores de tração','Sistema de iluminação','Tomadas auxiliares','Circuitos de comando']},
+{q:'Os motores de tração são alimentados por qual tensão gerada pelo Inversor de Tração?',a:'380 Vca',o:['380 Vca','72 Vcc','220 Vca','24 Vcc']},
+{q:'O que significa Vcc na identificação das tensões do trem?',a:'Corrente contínua',o:['Corrente contínua','Corrente alternada','Comando de cabine','Circuito convertido']},
+{q:'O que significa Vca ou Vac na identificação das tensões do trem?',a:'Corrente alternada',o:['Corrente alternada','Corrente contínua','Controle de velocidade auxiliar','Comando visual automático']},
+{q:'Quais tensões são geradas pelo Conversor Auxiliar (CVS)?',a:'380 Vac, 220 Vac e 72 Vcc',o:['380 Vac, 220 Vac e 72 Vcc','1500 Vcc, 12 Vcc e 24 Vcc','380 Vcc, 220 Vcc e 72 Vac','24 Vac, 72 Vac e 1500 Vac']},
+{q:'A tensão de 380 Vac gerada pelo CVS alimenta principalmente quais equipamentos?',a:'Compressores e unidades de ar condicionado',o:['Compressores e unidades de ar condicionado','Tomadas auxiliares e mapas de linha','Baterias e iluminação','Controle de acesso e vidro elétrico']},
+{q:'A tensão de 220 Vac gerada pelo CVS alimenta quais equipamentos?',a:'Tomadas auxiliares existentes no trem',o:['Tomadas auxiliares existentes no trem','Motores de tração','Bancos de bateria','Antenas CBTC']},
+{q:'A tensão de 72 Vcc gerada pelo CVS tem qual função?',a:'Carregar baterias, energizar iluminação e alimentar circuitos de comando',o:['Carregar baterias, energizar iluminação e alimentar circuitos de comando','Alimentar diretamente os motores de tração','Alimentar somente as tomadas auxiliares','Acionar exclusivamente o compressor']},
+{q:'A tensão de 72 Vcc é distribuída em todos os carros por quais linhas?',a:'AUTO e LOCAL',o:['AUTO e LOCAL','AM e MCS','R1 e R2','DCS e DLS']},
+{q:'As cargas da linha AUTO são energizadas em qual condição?',a:'Somente se o trem estiver ligado pela CEG',o:['Somente se o trem estiver ligado pela CEG','Mesmo com o trem desligado, sempre pela bateria','Somente com pantógrafos abaixados','Somente em Modo Socorro']},
+{q:'As cargas da linha LOCAL podem ser energizadas em qual condição?',a:'Com o trem ligado ou desligado, sendo alimentadas pela bateria quando desligado',o:['Com o trem ligado ou desligado, sendo alimentadas pela bateria quando desligado','Apenas com o trem em AM','Apenas com a rede aérea desenergizada','Somente pelo Inversor de Tração']},
+{q:'Quando o trem está desligado, de onde vem o 72 Vcc da linha LOCAL?',a:'Da bateria',o:['Da bateria','Da rede aérea diretamente','Do motor de tração','Do compressor']},
+{q:'Quando o trem está ligado, o CVS faz o quê com a bateria?',a:'Carrega a bateria e alimenta a linha LOCAL automaticamente',o:['Carrega a bateria e alimenta a linha LOCAL automaticamente','Desliga a bateria para economizar carga','Alimenta apenas as tomadas','Transforma a bateria em 1500 Vcc']},
+{q:'Em qual posição a chave mantém o equipamento energizado mesmo com o trem desligado pela CEG?',a:'LOC',o:['LOC','DESL','OFF','MCS']},
+{q:'Qual é a posição padrão das chaves de energização?',a:'AUTO',o:['AUTO','LOC','DESL','ISOL']},
+{q:'Na posição LOC, qual cuidado é importante se o trem estiver desligado?',a:'O equipamento consome bateria',o:['O equipamento consome bateria','O equipamento passa a gerar 1500 Vcc','O equipamento alimenta os motores de tração','O equipamento desliga a linha LOCAL']},
+{q:'A chave CBTC do carro 4 deve ficar em qual posição?',a:'LOC',o:['LOC','AUTO','DESL','OFF']},
+{q:'As fontes auxiliares dos carros transformam 72 Vcc em quais tensões?',a:'24 Vcc e 12 Vcc',o:['24 Vcc e 12 Vcc','220 Vac e 380 Vac','1500 Vcc e 380 Vca','72 Vac e 24 Vac']},
+{q:'O que é alimentado por 24 Vcc segundo o manual?',a:'Ventilador do recirculador, esguichador, luzes de cauda e spots',o:['Ventilador do recirculador, esguichador, luzes de cauda e spots','Motores de tração e compressores','Tomadas auxiliares e ar condicionado','Pantógrafos e bancos de resistores']},
+{q:'O que é alimentado por 12 Vcc segundo o manual?',a:'Controle de acesso e vidro elétrico da cabine',o:['Controle de acesso e vidro elétrico da cabine','Compressores e ar condicionado','Baterias e iluminação principal','Motores de tração']},
+{q:'O sistema de iluminação dos carros é energizado por qual tensão?',a:'72 Vcc',o:['72 Vcc','220 Vac','380 Vac','1500 Vcc']},
+{q:'Se houver falha dos conversores auxiliares, por que a iluminação continua funcionando?',a:'Porque é mantida pela bateria',o:['Porque é mantida pela bateria','Porque passa para 1500 Vcc direto','Porque é alimentada pelo compressor','Porque usa 380 Vac do inversor de tração']},
+{q:'Os circuitos de comando do ar condicionado são energizados com qual tensão?',a:'72 Vcc',o:['72 Vcc','380 Vac','220 Vac','1500 Vcc']},
+{q:'A alimentação de potência do ar condicionado ocorre por qual tensão?',a:'380 Vac',o:['380 Vac','72 Vcc','220 Vac','12 Vcc']},
+{q:'A alimentação do ar condicionado é cruzada para qual finalidade?',a:'Evitar perda total da refrigeração do carro se um CVS falhar',o:['Evitar perda total da refrigeração do carro se um CVS falhar','Aumentar a velocidade máxima do trem','Desligar automaticamente as baterias','Fazer o trem operar em AM']},
+{q:'O Conversor Auxiliar do carro 2 alimenta qual compressor?',a:'Compressor do carro 1',o:['Compressor do carro 1','Compressor do carro 3','Compressor do carro 4','Compressor do carro 6']},
+{q:'O Conversor Auxiliar do carro 3 alimenta qual compressor?',a:'Compressor do carro 3',o:['Compressor do carro 3','Compressor do carro 1','Compressor do carro 4','Compressor do carro 6']},
+{q:'O Conversor Auxiliar do carro 4 alimenta qual compressor?',a:'Compressor do carro 4',o:['Compressor do carro 4','Compressor do carro 1','Compressor do carro 3','Compressor do carro 6']},
+{q:'O Conversor Auxiliar do carro 5 alimenta qual compressor?',a:'Compressor do carro 6',o:['Compressor do carro 6','Compressor do carro 5','Compressor do carro 4','Compressor do carro 3']},
+{q:'O CVS do carro 2 alimenta quais unidades de ar condicionado?',a:'Unidades 1 dos carros 1 e 2 e unidade 2 do carro 3',o:['Unidades 1 dos carros 1 e 2 e unidade 2 do carro 3','Unidades 2 dos carros 1 e 2 e unidade 1 do carro 3','Unidades 2 dos carros 5 e 6 e unidade 1 do carro 4','Unidades 1 dos carros 5 e 6 e unidade 2 do carro 4']},
+{q:'O CVS do carro 3 alimenta quais unidades de ar condicionado?',a:'Unidades 2 dos carros 1 e 2 e unidade 1 do carro 3',o:['Unidades 2 dos carros 1 e 2 e unidade 1 do carro 3','Unidades 1 dos carros 1 e 2 e unidade 2 do carro 3','Unidades 1 dos carros 5 e 6 e unidade 2 do carro 4','Unidades 2 dos carros 5 e 6 e unidade 1 do carro 4']},
+{q:'O CVS do carro 4 alimenta quais unidades de ar condicionado?',a:'Unidades 2 dos carros 5 e 6 e unidade 1 do carro 4',o:['Unidades 2 dos carros 5 e 6 e unidade 1 do carro 4','Unidades 1 dos carros 5 e 6 e unidade 2 do carro 4','Unidades 1 dos carros 1 e 2 e unidade 2 do carro 3','Unidades 2 dos carros 1 e 2 e unidade 1 do carro 3']},
+{q:'O CVS do carro 5 alimenta quais unidades de ar condicionado?',a:'Unidades 1 dos carros 5 e 6 e unidade 2 do carro 4',o:['Unidades 1 dos carros 5 e 6 e unidade 2 do carro 4','Unidades 2 dos carros 5 e 6 e unidade 1 do carro 4','Unidades 1 dos carros 1 e 2 e unidade 2 do carro 3','Unidades 2 dos carros 1 e 2 e unidade 1 do carro 3']},
+{q:'Quais CVS alimentam os equipamentos dos carros 1, 2 e 3 com 380/220 Vac?',a:'CVS dos carros 2 e 3',o:['CVS dos carros 2 e 3','CVS dos carros 4 e 5','CVS dos carros 1 e 6','CVS dos carros 3 e 4']},
+{q:'Quais CVS alimentam os equipamentos dos carros 4, 5 e 6 com 380/220 Vac?',a:'CVS dos carros 4 e 5',o:['CVS dos carros 4 e 5','CVS dos carros 2 e 3','CVS dos carros 1 e 6','CVS dos carros 3 e 6']},
+{q:'Quais CVS carregam bancos de baterias segundo a distribuição do manual?',a:'CVS dos carros 2 e 5',o:['CVS dos carros 2 e 5','CVS dos carros 1 e 6','CVS dos carros 3 e 4','Todos os CVS igualmente']},
+{q:'Onde ficam os bancos de baterias do trem?',a:'Nos carros 2 e 5',o:['Nos carros 2 e 5','Nos carros 1 e 6','Nos carros 3 e 4','Em todos os carros']},
+{q:'Quando os CVS estão operando, o que eles fornecem ao trem?',a:'72 Vcc para equipamentos e carga dos bancos de baterias',o:['72 Vcc para equipamentos e carga dos bancos de baterias','1500 Vcc diretamente aos motores','220 Vac para o freio pneumático','12 Vcc para os compressores']},
+{q:'Se todos os CVS falharem, ou os pantógrafos estiverem abaixados, ou o trem estiver desligado, quem fornece 72 Vcc?',a:'Os bancos de baterias',o:['Os bancos de baterias','Os motores de tração','As tomadas auxiliares','O compressor do carro 1']},
+{q:'Qual é a autonomia das baterias indicada no manual?',a:'1 hora',o:['1 hora','30 minutos','10 minutos','2 horas']},
+{q:'Carga baixa da bateria é indicada quando a tensão fica menor que quanto?',a:'55 V',o:['55 V','72 V','24 V','90 V']},
+{q:'O inversor de emergência do ar condicionado gera qual tensão?',a:'380 Vac a partir da bateria',o:['380 Vac a partir da bateria','220 Vac a partir da rede aérea','72 Vcc a partir do compressor','1500 Vcc a partir das tomadas']},
+{q:'O inversor de emergência mantém qual função do ar condicionado?',a:'Ventilação',o:['Ventilação','Refrigeração completa','Aquecimento do para-brisa','Controle de portas']},
+{q:'Em qual condição o inversor de emergência atua no ar condicionado?',a:'Desenergização da rede aérea por mais de 1 minuto, com pantógrafos levantados',o:['Desenergização da rede aérea por mais de 1 minuto, com pantógrafos levantados','Sempre que o trem entra em AM','Quando o compressor atinge 10 bar','Quando a porta fica aberta por 3 segundos']},
+{q:'Por quanto tempo o inversor de emergência mantém a ventilação do ar condicionado?',a:'Até 30 minutos',o:['Até 30 minutos','Até 1 hora','Até 10 segundos','Até 1,5 minuto']},
+{q:'O disjuntor HSCB protege qual alimentação?',a:'1500 Vcc dos motores e inversores de tração',o:['1500 Vcc dos motores e inversores de tração','72 Vcc das portas','220 Vac das tomadas','24 Vcc dos spots']},
+{q:'Com o HSCB aberto, o carro fica sem quais funções?',a:'Tração ou freio elétrico',o:['Tração ou freio elétrico','Portas e CFTV','Iluminação de emergência','Bateria e tomada 220 V']},
+{q:'Qual tensão alimenta as tomadas auxiliares existentes no trem?',a:'220 Vac',o:['220 Vac','72 Vcc','380 Vac','1500 Vcc']}
+];
+function embaralhar(arr){return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1])}
+function montar(){const quiz=document.getElementById('quiz'); quiz.innerHTML=''; questoes.forEach((it,i)=>{let opts=embaralhar(it.o); let div=document.createElement('div'); div.className='card'; div.id='q'+i; div.innerHTML=`<div class="qtitle">${i+1}. ${it.q}</div>`+opts.map(op=>`<label class="opt"><input type="radio" name="q${i}" value="${op.replace(/"/g,'&quot;')}">${op}</label>`).join(''); quiz.appendChild(div);});}
+function finalizar(){let acertos=0, respondidas=0; questoes.forEach((it,i)=>{let card=document.getElementById('q'+i); card.classList.remove('ok','bad'); let sel=document.querySelector(`input[name=q${i}]:checked`); if(sel){respondidas++; if(sel.value===it.a){acertos++; card.classList.add('ok')} else {card.classList.add('bad')}} else {card.classList.add('bad')} let antigo=card.querySelector('.corr'); if(antigo) antigo.remove(); let corr=document.createElement('div'); corr.className='corr'; corr.innerHTML=`<div class="tag">Resposta correta: ${it.a}</div>`; card.appendChild(corr);}); let pct=Math.round((acertos/questoes.length)*100); let res=document.getElementById('resultado'); res.style.display='block'; res.innerHTML=`<div class="resumo">Pontuação: ${acertos}/${questoes.length} (${pct}%)</div><p>Respondidas: ${respondidas}/${questoes.length}</p><p class="small">Revise os cartões em vermelho. Foco: tensão, corrente contínua/alternada e distribuição de alimentação.</p>`; window.scrollTo({top:0,behavior:'smooth'});}
+montar();
+</script>
+</body>
+</html>
